@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue-lazy-loading demo</title>
+  <style>
+    img {
+      display: block;
+      margin: 0 auto 10px;
+      background-color: rosybrown;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <img v-for="n in 20" :key="n" :data-src="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
+  </div>
+  <script type="module">
+    import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js'
+    import LazyLoading from '../dist/index.js'
+
+    Vue.use(LazyLoading, {
+      useNative: true
+    })
+
+    new Vue({ el: '#app' })
+  </script>
+</body>
+</html>

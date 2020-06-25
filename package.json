@@ -1,0 +1,30 @@
+{
+  "name": "vue-lazy-loading",
+  "version": "1.0.0",
+  "description": "a vue plugin to better supporting lazy loading for image and iframe",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tolking/vue-lazy-loading.git"
+  },
+  "keywords": [
+    "vue",
+    "lazy",
+    "img",
+    "iframe",
+    "loading"
+  ],
+  "author": "tolking <qw13131wang@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tolking/vue-lazy-loading/issues"
+  },
+  "homepage": "https://github.com/tolking/vue-lazy-loading#readme",
+  "devDependencies": {
+    "typescript": "^3.9.5"
+  }
+}
