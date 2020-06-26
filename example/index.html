@@ -15,7 +15,8 @@
 </head>
 <body>
   <div id="app">
-    <img v-for="n in 20" :key="n" :data-src="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
+    <img v-for="item in imgList" :key="item" v-lazy="item" width="536" height="354">
+    <!-- <img v-for="n in 20" :key="n" :data-src="'https://picsum.photos/536/354?random=' + n" width="536" height="354"> -->
   </div>
   <script type="module">
     import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js'
@@ -25,7 +26,19 @@
       useNative: false
     })
 
-    new Vue({ el: '#app' })
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          imgList: []
+        }
+      },
+      mounted() {
+        setTimeout(() => { // NOTE: test
+          this.imgList = Array.from(new Array(2), (x, i) => 'https://picsum.photos/536/354?random=' + i)
+        }, 2000);
+      }
+    })
   </script>
 </body>
 </html>

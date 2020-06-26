@@ -1,40 +1,26 @@
-import { getObserver } from './util.js'
-import { LazyOptions, LazyElement } from '../types/index.js'
+import { getVueVersion, LazyCore } from './util.js'
+import { LazyOptions } from '../types/index.js'
 
 export default {
-  install(Vue: any, options: LazyOptions = {
-    useNative: true,
-    rootMargin: '200px',
-  }) {
-    Vue.mixin({
-      data() {
-        return {
-          $io: undefined,
-        }
-      },
-      mounted() {
-        const lazyEls = document.querySelectorAll<LazyElement>('img[data-src], iframe[data-src]')
+  install(Vue: any, options: LazyOptions) {
+    const lazy = new LazyCore(options)
+    const version = getVueVersion(Vue)
+    let config
 
-        if (!options.useNative || !('loading' in HTMLImageElement.prototype)) {
-          this.$io = getObserver(options.rootMargin)
-
-        	lazyEls.forEach((lazyEl: LazyElement) => {
-	        	this.$io.observe(lazyEl)
-	        })
-        } else {
-          lazyEls.forEach((lazyEl: LazyElement) => {
-            !lazyEl.getAttribute('loading') && lazyEl.setAttribute('loading', 'lazy')
-            !lazyEl.getAttribute('src') &&
-              lazyEl.getAttribute('data-src') &&
-              lazyEl.setAttribute('src', lazyEl.getAttribute('data-src') as string)
-          })
-        }
-      },
-      unmounted() {
-        if (!options.useNative || !('loading' in HTMLImageElement.prototype)) {
-          this.$io.disconnect()
-        }
+    if (version === 2) {
+      config = {
+        bind: lazy.bind.bind(lazy),
+        update: lazy.update.bind(lazy),
+        unbind: lazy.unbind.bind(lazy),
       }
-    })
+    } else {
+      config = {
+        mounted: lazy.bind.bind(lazy),
+        updated: lazy.update.bind(lazy),
+        unmounted: lazy.unbind.bind(lazy),
+      }
+    }
+
+    Vue.directive('lazy', config)
   }
 }
