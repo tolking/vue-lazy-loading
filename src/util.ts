@@ -1,4 +1,4 @@
-import { LazyOptions, LazyElement } from '../types/index.js'
+import { LazyOptions, LazyBinding, LazyElement } from '../types/index.js'
 
 export class LazyCore {
   private useNative: boolean
@@ -10,7 +10,7 @@ export class LazyCore {
     this.useNative = options?.useNative ?? true
     this.rootMargin = options?.rootMargin ?? '200px'
     this.init()
-    this.type = 'listener' // NOTE: test
+    // this.type = 'listener' // NOTE: test
 
     console.log(this);
   }
@@ -26,24 +26,46 @@ export class LazyCore {
     }
   }
 
-  bind(el: Element, { value }: { value: string }) {
-    console.log('bind', value);
+  bind(el: Element, binding: LazyBinding) {
+    console.log('bind', binding.value);
     
-    !el.getAttribute('loading') && el.setAttribute('loading', 'lazy')
-    this.update(el, { value })
+    !el.hasAttribute('loading') && el.setAttribute('loading', 'lazy')
+    this.update(el, binding)
   }
 
-  update(el: Element, { value }: { value: string }) {
-    console.log('update', value);
+  update(el: Element, { value, arg }: LazyBinding) {
+    console.log('update', arg, value);
     
-    if (this.type === 'loading') {
-      el.setAttribute('src', value)
-    } else if (this.type === 'observer') {
-      el.setAttribute('data-src', value)
-      this.io?.observe(el)
-    } else {
-      console.log('TODO: ');
+    if (arg) {
+      if (['bg', 'background'].includes(arg)) {
+        if (this.type === 'loading' || this.type === 'observer') {
+          if (!this.io) {
+            this.setObserver()
+          }
+          el.setAttribute('data-bg', value)
+          this.io?.observe(el)
+        } else {
+          console.log('TODO: ');
+          
+          el.setAttribute('data-bg', value)
+        }
+      } else {
+        error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL"]')
+      }
+      console.log(el.getAttribute('style.backgroundImage'));
       
+    } else {
+      el.hasAttribute('src') && el.removeAttribute('src')
+      if (this.type === 'loading') {
+        el.setAttribute('src', value)
+      } else if (this.type === 'observer') {
+        el.setAttribute('data-src', value)
+        this.io?.observe(el)
+      } else {
+        console.log('TODO: ');
+        
+        el.setAttribute('data-src', value)
+      }
     }
   }
 
@@ -59,7 +81,15 @@ export class LazyCore {
     this.io = new IntersectionObserver(entries => {
       entries.forEach(item => {
         if (item.isIntersecting) {
-          (item.target as LazyElement).src = (item.target as LazyElement).dataset.src
+          const src = (item.target as LazyElement).dataset?.src
+          const bg = (item.target as LazyElement).dataset?.bg
+
+          if (src) {
+            (item.target as LazyElement).src = src
+          }
+          if (bg) {
+            (item.target as LazyElement).style.backgroundImage = `url(${bg})`
+          }
           this.io?.unobserve(item.target)
         }
       })
@@ -71,4 +101,8 @@ export class LazyCore {
 
 export function getVueVersion(Vue: any) {
   return Number(Vue.version.split('.')[0])
+}
+
+export function error(msg: string) {
+  console.error('[vue-lazy-loading error]: ' + msg);
 }

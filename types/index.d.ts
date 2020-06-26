@@ -3,9 +3,15 @@ export type LazyOptions = undefined | {
   rootMargin?: string
 }
 
-export interface LazyElement extends Element {
-  src: string | null
+export interface LazyBinding {
+  value: string
+  arg?: 'bg' | 'background'
+}
+
+export interface LazyElement extends HTMLElement {
+  src: string
   dataset: {
-    src: string
+    src?: string
+    bg?: string
   }
 }

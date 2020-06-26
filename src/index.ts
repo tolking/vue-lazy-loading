@@ -1,4 +1,4 @@
-import { getVueVersion, LazyCore } from './util.js'
+import { getVueVersion, LazyCore, error } from './util.js'
 import { LazyOptions } from '../types/index.js'
 
 export default {
@@ -7,7 +7,9 @@ export default {
     const version = getVueVersion(Vue)
     let config
 
-    if (version === 2) {
+    if (version < 2) {
+      error('Support version 2.X and 3.X')
+    } else if (version === 2) {
       config = {
         bind: lazy.bind.bind(lazy),
         update: lazy.update.bind(lazy),
