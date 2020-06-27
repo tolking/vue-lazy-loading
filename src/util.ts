@@ -3,16 +3,13 @@ import { LazyOptions, LazyBinding, LazyElement } from '../types/index.js'
 export class LazyCore {
   private useNative: boolean
   private rootMargin: string
-  private type: 'loading' | 'observer' | 'listener' = 'loading'
+  private type: 'loading' | 'observer' | 'none' = 'loading'
   private io?: IntersectionObserver
 
   constructor(options: LazyOptions) {
     this.useNative = options?.useNative ?? true
     this.rootMargin = options?.rootMargin ?? '200px'
     this.init()
-    // this.type = 'listener' // NOTE: test
-
-    console.log(this);
   }
 
   private init() {
@@ -22,38 +19,51 @@ export class LazyCore {
       this.type = 'observer'
       this.setObserver()
     } else {
-      this.type = 'listener'
+      this.type = 'none'
+      error('Your browser does not support IntersectionObserver. https://github.com/tolking/vue-lazy-loading#Browser Support')
     }
   }
 
   bind(el: Element, binding: LazyBinding) {
-    console.log('bind', binding.value);
-    
     !el.hasAttribute('loading') && el.setAttribute('loading', 'lazy')
     this.update(el, binding)
   }
 
-  update(el: Element, { value, arg }: LazyBinding) {
-    console.log('update', arg, value);
-    
+  update(el: Element, { oldValue, value, arg }: LazyBinding) {
+    if (oldValue === value) return
     if (arg) {
-      if (['bg', 'background'].includes(arg)) {
-        if (this.type === 'loading' || this.type === 'observer') {
-          if (!this.io) {
-            this.setObserver()
+      switch (arg) {
+        case 'bg':
+        case 'background':
+          if ((el as LazyElement).style.backgroundImage) {
+            (el as LazyElement).style.backgroundImage = ''
           }
-          el.setAttribute('data-bg', value)
-          this.io?.observe(el)
-        } else {
-          console.log('TODO: ');
-          
-          el.setAttribute('data-bg', value)
-        }
-      } else {
-        error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL"]')
+          if (this.type === 'loading' || this.type === 'observer') {
+            if (!this.io) {
+              this.setObserver()
+            }
+            el.setAttribute('data-bg', value)
+            this.io?.observe(el)
+          } else {
+            (el as LazyElement).style.backgroundImage = `url(${value})`
+          }
+          break;
+        case 'set':
+        case 'srcset':
+          el.hasAttribute('srcset') && el.removeAttribute('srcset')
+          if (this.type === 'loading') {
+            el.setAttribute('srcset', value)
+          } else if (this.type === 'observer') {
+            el.setAttribute('data-srcset', value)
+            this.io?.observe(el)
+          } else {
+            el.setAttribute('srcset', value)
+          }
+          break
+        default:
+          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL"]')
+          break;
       }
-      console.log(el.getAttribute('style.backgroundImage'));
-      
     } else {
       el.hasAttribute('src') && el.removeAttribute('src')
       if (this.type === 'loading') {
@@ -62,16 +72,12 @@ export class LazyCore {
         el.setAttribute('data-src', value)
         this.io?.observe(el)
       } else {
-        console.log('TODO: ');
-        
-        el.setAttribute('data-src', value)
+        el.setAttribute('src', value)
       }
     }
   }
 
-  unbind(el: Element) {
-    console.log('unbind');
-    
+  unbind(el: Element) { 
     if (this.type === 'observer') {
       this.io?.unobserve(el)
     }
@@ -82,10 +88,14 @@ export class LazyCore {
       entries.forEach(item => {
         if (item.isIntersecting) {
           const src = (item.target as LazyElement).dataset?.src
+          const srcset = (item.target as LazyElement).dataset?.srcset
           const bg = (item.target as LazyElement).dataset?.bg
 
           if (src) {
             (item.target as LazyElement).src = src
+          }
+          if (srcset) {
+            (item.target as LazyElement).srcset = srcset
           }
           if (bg) {
             (item.target as LazyElement).style.backgroundImage = `url(${bg})`
@@ -104,5 +114,6 @@ export function getVueVersion(Vue: any) {
 }
 
 export function error(msg: string) {
-  console.error('[vue-lazy-loading error]: ' + msg);
+  process.env.NODE_ENV === 'development' &&
+    console.error('[vue-lazy-loading error]: ' + msg);
 }
