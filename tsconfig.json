@@ -2,10 +2,10 @@
   "compilerOptions": {
     "target": "ES5",
     "module":"ES2015",
-    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "lib": ["ES2015", "ES2016", "ES2017", "DOM"],
     "outDir": "dist",
+    "strict": true,
     "declaration": true,
-    "sourceMap": true,
     "removeComments": true
   },
   "include": ["src", "types"]

@@ -11,20 +11,29 @@
       margin: 0 auto 10px;
       background-color: rosybrown;
     }
+    .bg {
+      display: block;
+      margin: 0 auto 10px;
+      width:536px;
+      height:354px;
+      background-color: rosybrown;
+      font-size: 80px;
+      color: aqua;
+      text-align: center;
+      line-height: 354px;
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    <img v-for="n in 20" :key="n" :data-src="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
+    <div v-lazy:bg="'https://picsum.photos/536/354?random'" class="bg">background</div>
+    <img v-for="n in 20" :key="n" v-lazy="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
   </div>
   <script type="module">
     import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js'
     import LazyLoading from '../dist/index.js'
 
-    Vue.use(LazyLoading, {
-      useNative: true
-    })
-
+    Vue.use(LazyLoading)
     new Vue({ el: '#app' })
   </script>
 </body>
