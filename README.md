@@ -30,21 +30,26 @@ import LazyLoading from 'vue-lazy-loading'
 Vue.use(LazyLoading)
 ```
 
-- **Setting a fixed size is better for browser loading**
-
 ``` vue
 <template>
+  <!-- Setting a fixed size is better for browser loading -->
+  <!-- Replace `src` with `v-lazy` -->
   <img v-lazy="'img.jpg'" width="536" height="354" />
 
+  <!-- Set `loading="lazy"` is not required -->
+  <iframe v-lazy="'iframe.html'" loading="lazy" width="1000" height="500" />
+
+  <!-- Load right away with set `loading="eager"` -->
+  <iframe v-lazy="'iframe.html'" loading="eager" width="1000" height="500" />
+
+  <!-- Pass in the Relative URLs like this -->
   <img v-lazy="logo" width="100" height="100" />
 
-  <iframe v-lazy="'iframe.html'" width="1000" height="500" />
-
-  <div v-lazy:bg="logo">background</div>
-  <!--or v-lazy:background="logo"-->
-  
+  <!-- Replace `srcset` with `v-lazy:set` or `v-lazy:srcset` -->
   <img v-lazy="'img.jpg'" v-lazy:set="'img.jpg 1000w, img-2x.jpg 2000w'" width="536" height="354" />
-  <!--or v-lazy:srcset="URL"-->
+
+  <!-- Replace `style.backgroundImage` with `v-lazy:bg` or `v-lazy:background` -->
+  <div v-lazy:bg="logo">background</div>
 </template>
 
 <script>
@@ -77,7 +82,7 @@ rootMargin for IntersectionObserver
 
 ## Browser Support
 
-Available in [latest browsers](http://caniuse.com/#feat=intersectionobserver). If browser support is not available, then make use of this [polyfill](https://www.npmjs.com/package/intersection-observer).
+Available in [latest browsers](http://caniuse.com/#feat=intersectionobserver). If browser support is not available (eg IE), then make use of this [polyfill](https://www.npmjs.com/package/intersection-observer).
 
 ``` js
 require('intersection-observer')
