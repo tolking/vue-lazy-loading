@@ -25,12 +25,17 @@ export class LazyCore {
   }
 
   bind(el: Element, binding: LazyBinding) {
-    !el.hasAttribute('loading') && el.setAttribute('loading', 'lazy')
+    binding.arg !== 'bg' &&
+      binding.arg !== 'background' &&
+      !el.hasAttribute('loading') &&
+      el.setAttribute('loading', 'lazy')
     this.update(el, binding)
   }
 
   update(el: Element, { oldValue, value, arg }: LazyBinding) {
     if (oldValue === value) return
+    const isEager = el.getAttribute('loading') === 'eager'
+
     if (arg) {
       switch (arg) {
         case 'bg':
@@ -38,7 +43,7 @@ export class LazyCore {
           if ((el as LazyElement).style.backgroundImage) {
             (el as LazyElement).style.backgroundImage = ''
           }
-          if (this.type === 'loading' || this.type === 'observer') {
+          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
             if (!this.io) {
               this.setObserver()
             }
@@ -53,7 +58,7 @@ export class LazyCore {
           el.hasAttribute('srcset') && el.removeAttribute('srcset')
           if (this.type === 'loading') {
             el.setAttribute('srcset', value)
-          } else if (this.type === 'observer') {
+          } else if (!isEager && this.type === 'observer') {
             el.setAttribute('data-srcset', value)
             this.io?.observe(el)
           } else {
@@ -61,14 +66,14 @@ export class LazyCore {
           }
           break
         default:
-          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL"]')
+          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL", v-lazy：srcset="URL"]')
           break;
       }
     } else {
       el.hasAttribute('src') && el.removeAttribute('src')
       if (this.type === 'loading') {
         el.setAttribute('src', value)
-      } else if (this.type === 'observer') {
+      } else if (!isEager && this.type === 'observer') {
         el.setAttribute('data-src', value)
         this.io?.observe(el)
       } else {
@@ -77,7 +82,7 @@ export class LazyCore {
     }
   }
 
-  unbind(el: Element) { 
+  unbind(el: Element) {
     if (this.type === 'observer') {
       this.io?.unobserve(el)
     }

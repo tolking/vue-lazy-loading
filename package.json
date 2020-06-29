@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/tolking/vue-lazy-loading#readme",
   "devDependencies": {
+    "@types/node": "^14.0.14",
     "typescript": "^3.9.5"
   }
 }
