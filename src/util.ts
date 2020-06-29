@@ -66,7 +66,7 @@ export class LazyCore {
           }
           break
         default:
-          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL"， v-lazy：srcset="URL"]')
+          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL", v-lazy：srcset="URL"]')
           break;
       }
     } else {
@@ -82,7 +82,7 @@ export class LazyCore {
     }
   }
 
-  unbind(el: Element) { 
+  unbind(el: Element) {
     if (this.type === 'observer') {
       this.io?.unobserve(el)
     }

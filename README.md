@@ -1,6 +1,6 @@
 # vue-lazy-loading
 
-> *alpha* a vue plugin to better supporting lazy loading for image and iframe
+> a vue plugin to better supporting lazy loading for image and iframe
 
 **The plugin will preferentially use native image and iframe [lazy-loading](https://caniuse.com/#feat=loading-lazy-attr), if the browser does not support it, it will be implemented through [IntersectionObserver](https://caniuse.com/#feat=intersectionobserver)**
 
@@ -79,6 +79,17 @@ Use the native image lazy-loading for the web
 - Required: `false`
 
 rootMargin for IntersectionObserver
+
+## Load animation
+
+Loading animation is not included by default. You can use it this way
+
+``` css
+img,
+iframe {
+  background: rgba(50, 50, 50, 0.3) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="white"><path opacity=".25" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"/><path d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"><animateTransform attributeName="transform" type="rotate" from="0 16 16" to="360 16 16" dur="0.8s" repeatCount="indefinite" /></path></svg>') center no-repeat;
+}
+```
 
 ## Browser Support
 
