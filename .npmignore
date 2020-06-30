@@ -8,7 +8,8 @@
 node_modules/
 test/
 docs/
-examples/
+example/
+src/
 
 npm-debug.log
 yarn-error.log

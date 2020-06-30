@@ -30,7 +30,7 @@ import LazyLoading from 'vue-lazy-loading'
 Vue.use(LazyLoading)
 ```
 
-``` vue
+``` html
 <template>
   <!-- Setting a fixed size is better for browser loading -->
   <!-- Replace `src` with `v-lazy` -->
