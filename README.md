@@ -103,7 +103,3 @@ import LazyLoading from 'vue-lazy-loading'
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
-
-## Keywords
-
-vue lazy img iframe loading background-image

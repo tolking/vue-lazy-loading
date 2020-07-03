@@ -1,12 +1,13 @@
 {
   "name": "vue-lazy-loading",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a vue plugin to better supporting lazy loading for image and iframe",
   "main": "dist/index.js",
   "type": "module",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "build": "tsc -b"
   },
   "repository": {
     "type": "git",
