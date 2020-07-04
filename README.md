@@ -30,7 +30,7 @@ import LazyLoading from 'vue-lazy-loading'
 Vue.use(LazyLoading)
 ```
 
-``` vue
+``` html
 <template>
   <!-- Setting a fixed size is better for browser loading -->
   <!-- Replace `src` with `v-lazy` -->
@@ -103,7 +103,3 @@ import LazyLoading from 'vue-lazy-loading'
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
-
-## Keywords
-
-vue lazy img iframe loading background-image

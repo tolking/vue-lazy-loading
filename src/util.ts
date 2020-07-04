@@ -92,18 +92,17 @@ export class LazyCore {
     this.io = new IntersectionObserver(entries => {
       entries.forEach(item => {
         if (item.isIntersecting) {
-          const src = (item.target as LazyElement).dataset?.src
-          const srcset = (item.target as LazyElement).dataset?.srcset
-          const bg = (item.target as LazyElement).dataset?.bg
+          const el = (item.target as LazyElement)
+          const { src, srcset, bg } = getDataset(el)
 
           if (src) {
-            (item.target as LazyElement).src = src
+            el.src = src
           }
           if (srcset) {
-            (item.target as LazyElement).srcset = srcset
+            el.srcset = srcset
           }
           if (bg) {
-            (item.target as LazyElement).style.backgroundImage = `url(${bg})`
+            el.style.backgroundImage = `url(${bg})`
           }
           this.io?.unobserve(item.target)
         }
@@ -111,6 +110,28 @@ export class LazyCore {
     }, {
       rootMargin: this.rootMargin
     })
+  }
+}
+
+function getDataset(el: LazyElement) {
+  if (el.dataset) {
+    return el.dataset
+  } else {
+    const obj = {} as LazyElement['dataset']
+
+    for (let i = 0; i < el.attributes.length; i++) {
+      const name = el.attributes[i].nodeName
+
+      if (/^data-\w+$/.test(name)) {
+        const key = name.split('-')[1]
+        const value = el.attributes[i].nodeValue || undefined
+
+        if (['src', 'srcset', 'bg'].indexOf(key) !== -1) {
+          obj[key as 'src' | 'srcset' | 'bg'] = value
+        }
+      }
+    }
+    return obj
   }
 }
 
