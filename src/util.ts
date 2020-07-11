@@ -3,13 +3,12 @@ import { LazyOptions, LazyBinding, LazyElement } from '../types/index.js'
 export class LazyCore {
   private useNative: boolean
   private rootMargin: string
-  private type: 'loading' | 'observer' | 'none' = 'loading'
+  private type?: 'loading' | 'observer' | 'none'
   private io?: IntersectionObserver
 
   constructor(options: LazyOptions) {
     this.useNative = options?.useNative ?? true
     this.rootMargin = options?.rootMargin ?? '200px'
-    this.init()
   }
 
   private init() {
@@ -25,6 +24,7 @@ export class LazyCore {
   }
 
   bind(el: Element, binding: LazyBinding) {
+    !this.type && this.init()
     binding.arg !== 'bg' &&
       binding.arg !== 'background' &&
       !el.hasAttribute('loading') &&
