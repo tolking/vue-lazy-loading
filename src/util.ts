@@ -26,7 +26,6 @@ export class LazyCore {
   bind(el: Element, binding: LazyBinding) {
     !this.type && this.init()
     binding.arg !== 'bg' &&
-      binding.arg !== 'background' &&
       !el.hasAttribute('loading') &&
       el.setAttribute('loading', 'lazy')
     this.update(el, binding)
@@ -38,21 +37,6 @@ export class LazyCore {
 
     if (arg) {
       switch (arg) {
-        case 'bg':
-        case 'background':
-          if ((el as LazyElement).style.backgroundImage) {
-            (el as LazyElement).style.backgroundImage = ''
-          }
-          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
-            if (!this.io) {
-              this.setObserver()
-            }
-            el.setAttribute('data-bg', value)
-            this.io?.observe(el)
-          } else {
-            (el as LazyElement).style.backgroundImage = `url(${value})`
-          }
-          break;
         case 'set':
         case 'srcset':
           el.hasAttribute('srcset') && el.removeAttribute('srcset')
@@ -65,8 +49,30 @@ export class LazyCore {
             el.setAttribute('srcset', value)
           }
           break
+        case 'bg':
+          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
+            if (!this.io) {
+              this.setObserver()
+            }
+            el.setAttribute('data-bg', value)
+            this.io?.observe(el)
+          } else {
+            setStyle(el, 'bg', value)
+          }
+          break;
+        case 'bgset':
+          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
+            if (!this.io) {
+              this.setObserver()
+            }
+            el.setAttribute('data-bgset', value)
+            this.io?.observe(el)
+          } else {
+            setStyle(el, 'bgset', value)
+          }
+          break;
         default:
-          error('One of [v-lazy="URL", v-lazy:bg="URL", v-lazy:background="URL", v-lazy:set="URL", v-lazy：srcset="URL"]')
+          error('One of v-lazy, v-lazy:set, v-lazy:srcset, v-lazy:bg, v-lazy:bgset')
           break;
       }
     } else {
@@ -93,16 +99,19 @@ export class LazyCore {
       entries.forEach(item => {
         if (item.isIntersecting) {
           const el = (item.target as LazyElement)
-          const { src, srcset, bg } = getDataset(el)
+          const { src, srcset, bg, bgset } = getDataset(el)
 
+          if (bg) {
+            setStyle(el, 'bg', bg)
+          }
+          if (bgset) {
+            setStyle(el, 'bgset', bgset)
+          }
           if (src) {
             el.src = src
           }
           if (srcset) {
             el.srcset = srcset
-          }
-          if (bg) {
-            el.style.backgroundImage = `url(${bg})`
           }
           this.io?.unobserve(item.target)
         }
@@ -126,8 +135,8 @@ function getDataset(el: LazyElement) {
         const key = name.split('-')[1]
         const value = el.attributes[i].nodeValue || undefined
 
-        if (['src', 'srcset', 'bg'].indexOf(key) !== -1) {
-          obj[key as 'src' | 'srcset' | 'bg'] = value
+        if (['src', 'srcset', 'bg', 'bgset'].indexOf(key) !== -1) {
+          obj[key as 'src' | 'srcset' | 'bg' | 'bgset'] = value
         }
       }
     }
@@ -137,6 +146,17 @@ function getDataset(el: LazyElement) {
 
 export function getVueVersion(Vue: any) {
   return Number(Vue.version.split('.')[0])
+}
+
+export function setStyle(el: Element, type: 'bg' | 'bgset', value: string) {
+  const oldStyle = el.getAttribute('style')
+  const style =
+    type === 'bg'
+      ? `background-image: url(${value})`
+      : `background-image: -webkit-image-set(${value}); background-image: image-set(${value})`
+  const newStyle = oldStyle ? oldStyle + ';' + style : style
+
+  el.setAttribute('style', newStyle)
 }
 
 export function error(msg: string) {

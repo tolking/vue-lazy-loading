@@ -6,7 +6,7 @@ export type LazyOptions = undefined | {
 export interface LazyBinding {
   oldValue: string
   value: string
-  arg?: 'bg' | 'background' | 'set' | 'srcset'
+  arg?: 'set' | 'srcset' | 'bg' | 'bgset'
 }
 
 export interface LazyElement extends HTMLElement {
@@ -16,5 +16,6 @@ export interface LazyElement extends HTMLElement {
     src?: string
     srcset?: string
     bg?: string
+    bgset?: string
   }
 }
