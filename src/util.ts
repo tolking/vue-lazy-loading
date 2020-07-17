@@ -26,6 +26,7 @@ export class LazyCore {
   bind(el: Element, binding: LazyBinding) {
     !this.type && this.init()
     binding.arg !== 'bg' &&
+      binding.arg !== 'bgset' &&
       !el.hasAttribute('loading') &&
       el.setAttribute('loading', 'lazy')
     this.update(el, binding)
@@ -35,56 +36,55 @@ export class LazyCore {
     if (oldValue === value) return
     const isEager = el.getAttribute('loading') === 'eager'
 
-    if (arg) {
-      switch (arg) {
-        case 'set':
-        case 'srcset':
-          el.hasAttribute('srcset') && el.removeAttribute('srcset')
-          if (this.type === 'loading') {
-            el.setAttribute('srcset', value)
-          } else if (!isEager && this.type === 'observer') {
-            el.setAttribute('data-srcset', value)
-            this.io?.observe(el)
-          } else {
-            el.setAttribute('srcset', value)
+    switch (arg) {
+      case undefined:
+        el.hasAttribute('src') && el.removeAttribute('src')
+        if (this.type === 'loading') {
+          el.setAttribute('src', value)
+        } else if (!isEager && this.type === 'observer') {
+          el.setAttribute('data-src', value)
+          this.io?.observe(el)
+        } else {
+          el.setAttribute('src', value)
+        }
+        break
+      case 'set':
+      case 'srcset':
+        el.hasAttribute('srcset') && el.removeAttribute('srcset')
+        if (this.type === 'loading') {
+          el.setAttribute('srcset', value)
+        } else if (!isEager && this.type === 'observer') {
+          el.setAttribute('data-srcset', value)
+          this.io?.observe(el)
+        } else {
+          el.setAttribute('srcset', value)
+        }
+        break
+      case 'bg':
+        if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
+          if (!this.io) {
+            this.setObserver()
           }
-          break
-        case 'bg':
-          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
-            if (!this.io) {
-              this.setObserver()
-            }
-            el.setAttribute('data-bg', value)
-            this.io?.observe(el)
-          } else {
-            setStyle(el, 'bg', value)
+          el.setAttribute('data-bg', value)
+          this.io?.observe(el)
+        } else {
+          setStyle(el, 'bg', value)
+        }
+        break;
+      case 'bgset':
+        if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
+          if (!this.io) {
+            this.setObserver()
           }
-          break;
-        case 'bgset':
-          if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
-            if (!this.io) {
-              this.setObserver()
-            }
-            el.setAttribute('data-bgset', value)
-            this.io?.observe(el)
-          } else {
-            setStyle(el, 'bgset', value)
-          }
-          break;
-        default:
-          error('One of v-lazy, v-lazy:set, v-lazy:srcset, v-lazy:bg, v-lazy:bgset')
-          break;
-      }
-    } else {
-      el.hasAttribute('src') && el.removeAttribute('src')
-      if (this.type === 'loading') {
-        el.setAttribute('src', value)
-      } else if (!isEager && this.type === 'observer') {
-        el.setAttribute('data-src', value)
-        this.io?.observe(el)
-      } else {
-        el.setAttribute('src', value)
-      }
+          el.setAttribute('data-bgset', value)
+          this.io?.observe(el)
+        } else {
+          setStyle(el, 'bgset', value)
+        }
+        break;
+      default:
+        error('One of v-lazy, v-lazy:set, v-lazy:srcset, v-lazy:bg, v-lazy:bgset')
+        break;
     }
   }
 
@@ -101,18 +101,10 @@ export class LazyCore {
           const el = (item.target as LazyElement)
           const { src, srcset, bg, bgset } = getDataset(el)
 
-          if (bg) {
-            setStyle(el, 'bg', bg)
-          }
-          if (bgset) {
-            setStyle(el, 'bgset', bgset)
-          }
-          if (src) {
-            el.src = src
-          }
-          if (srcset) {
-            el.srcset = srcset
-          }
+          bg && setStyle(el, 'bg', bg)
+          bgset && setStyle(el, 'bgset', bgset)
+          src && el.setAttribute('src', src)
+          srcset && el.setAttribute('srcset', srcset)
           this.io?.unobserve(item.target)
         }
       })
@@ -152,9 +144,9 @@ export function setStyle(el: Element, type: 'bg' | 'bgset', value: string) {
   const oldStyle = el.getAttribute('style')
   const style =
     type === 'bg'
-      ? `background-image: url(${value})`
-      : `background-image: -webkit-image-set(${value}); background-image: image-set(${value})`
-  const newStyle = oldStyle ? oldStyle + ';' + style : style
+      ? `background-image: url(${value});`
+      : `background-image: -webkit-image-set(${value}); background-image: image-set(${value});`
+  const newStyle = oldStyle ? oldStyle + style : style
 
   el.setAttribute('style', newStyle)
 }

@@ -83,7 +83,7 @@ Use the native image lazy-loading for the web
 
 rootMargin for IntersectionObserver
 
-## Load animation
+## Loading animation
 
 Loading animation is not included by default. You can use it this way
 
