@@ -9,7 +9,7 @@
     img {
       display: block;
       margin: 0 auto 10px;
-      background-color: rosybrown;
+      background: rgba(50, 50, 50, 0.3) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="white"><path opacity=".25" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"/><path d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"><animateTransform attributeName="transform" type="rotate" from="0 16 16" to="360 16 16" dur="0.8s" repeatCount="indefinite" /></path></svg>') center no-repeat;
     }
     .bg {
       display: block;
@@ -26,7 +26,7 @@
 </head>
 <body>
   <div id="app">
-    <div v-lazy:bg="'https://picsum.photos/536/354?random'" class="bg">background</div>
+    <div v-lazy:bg="'https://picsum.photos/536/354?random'" v-lazy:bgset="'url(https://picsum.photos/536/354?random) 1x, url(https://picsum.photos/1000/1000?random) 2x'" class="bg" style="box-shadow: 2px 3px 10px rgba(0,0,0,.3);">background</div>
     <img v-for="n in 20" :key="n" v-lazy="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
   </div>
   <script type="module">

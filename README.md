@@ -48,8 +48,11 @@ Vue.use(LazyLoading)
   <!-- Replace `srcset` with `v-lazy:set` or `v-lazy:srcset` -->
   <img v-lazy="'img.jpg'" v-lazy:set="'img.jpg 1000w, img-2x.jpg 2000w'" width="536" height="354" />
 
-  <!-- Replace `style.backgroundImage` with `v-lazy:bg` or `v-lazy:background` -->
+  <!-- Replace `background-image` with `v-lazy:bg` -->
   <div v-lazy:bg="logo">background</div>
+
+  <!-- Replace `background-image: image-set` with `v-lazy:bgset` -->
+  <div v-lazy:bgset="'url(bg.img) 1x, url(bg-2x.img) 2x'">background</div>
 </template>
 
 <script>
@@ -80,7 +83,7 @@ Use the native image lazy-loading for the web
 
 rootMargin for IntersectionObserver
 
-## Load animation
+## Loading animation
 
 Loading animation is not included by default. You can use it this way
 
