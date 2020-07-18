@@ -39,11 +39,9 @@ export class LazyCore {
     switch (arg) {
       case undefined:
         el.hasAttribute('src') && el.removeAttribute('src')
-        if (this.type === 'loading') {
-          el.setAttribute('src', value)
-        } else if (!isEager && this.type === 'observer') {
+        if (!isEager && this.type === 'observer') {
           el.setAttribute('data-src', value)
-          this.io?.observe(el)
+          this.io!.observe(el)
         } else {
           el.setAttribute('src', value)
         }
@@ -51,33 +49,27 @@ export class LazyCore {
       case 'set':
       case 'srcset':
         el.hasAttribute('srcset') && el.removeAttribute('srcset')
-        if (this.type === 'loading') {
-          el.setAttribute('srcset', value)
-        } else if (!isEager && this.type === 'observer') {
+        if (!isEager && this.type === 'observer') {
           el.setAttribute('data-srcset', value)
-          this.io?.observe(el)
+          this.io!.observe(el)
         } else {
           el.setAttribute('srcset', value)
         }
         break
       case 'bg':
         if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
-          if (!this.io) {
-            this.setObserver()
-          }
+          !this.io && this.setObserver()
           el.setAttribute('data-bg', value)
-          this.io?.observe(el)
+          this.io!.observe(el)
         } else {
           setStyle(el, 'bg', value)
         }
         break;
       case 'bgset':
         if (!isEager && (this.type === 'loading' || this.type === 'observer')) {
-          if (!this.io) {
-            this.setObserver()
-          }
+          !this.io && this.setObserver()
           el.setAttribute('data-bgset', value)
-          this.io?.observe(el)
+          this.io!.observe(el)
         } else {
           setStyle(el, 'bgset', value)
         }
@@ -89,9 +81,7 @@ export class LazyCore {
   }
 
   unbind(el: Element) {
-    if (this.type === 'observer') {
-      this.io?.unobserve(el)
-    }
+    this.type === 'observer' && this.io!.unobserve(el)
   }
 
   private setObserver() {
@@ -105,7 +95,7 @@ export class LazyCore {
           bgset && setStyle(el, 'bgset', bgset)
           src && el.setAttribute('src', src)
           srcset && el.setAttribute('srcset', srcset)
-          this.io?.unobserve(item.target)
+          this.io!.unobserve(item.target)
         }
       })
     }, {
@@ -141,12 +131,12 @@ export function getVueVersion(Vue: any) {
 }
 
 export function setStyle(el: Element, type: 'bg' | 'bgset', value: string) {
-  const oldStyle = el.getAttribute('style')
+  const oldStyle = el.getAttribute('style') || ''
   const style =
     type === 'bg'
       ? `background-image: url(${value});`
       : `background-image: -webkit-image-set(${value}); background-image: image-set(${value});`
-  const newStyle = oldStyle ? oldStyle + style : style
+  const newStyle = oldStyle + style
 
   el.setAttribute('style', newStyle)
 }

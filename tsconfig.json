@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES5",
     "module":"ES2015",
-    "lib": ["ES2015", "ES2016", "ES2017", "DOM"],
+    "lib": ["ESNext", "DOM"],
     "outDir": "dist",
     "strict": true,
     "declaration": true,

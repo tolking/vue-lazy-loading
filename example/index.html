@@ -26,14 +26,14 @@
 </head>
 <body>
   <div id="app">
-    <div v-lazy:bg="'https://picsum.photos/536/354?random'" v-lazy:bgset="'url(https://picsum.photos/536/354?random) 1x, url(https://picsum.photos/1000/1000?random) 2x'" class="bg">background</div>
+    <div v-lazy:bg="'https://picsum.photos/536/354?random'" v-lazy:bgset="'url(https://picsum.photos/536/354?random) 1x, url(https://picsum.photos/1000/1000?random) 2x'" class="bg" style="box-shadow: 2px 3px 10px rgba(0,0,0,.3);">background</div>
     <img v-for="n in 20" :key="n" v-lazy="'https://picsum.photos/536/354?random=' + n" width="536" height="354">
   </div>
   <script type="module">
     import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js'
     import LazyLoading from '../dist/index.js'
 
-    Vue.use(LazyLoading, { useNative: false })
+    Vue.use(LazyLoading)
     new Vue({ el: '#app' })
   </script>
 </body>
