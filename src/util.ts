@@ -19,7 +19,7 @@ export class LazyCore {
       this.setObserver()
     } else {
       this.type = 'none'
-      error('Your browser does not support IntersectionObserver. https://github.com/tolking/vue-lazy-loading#Browser Support')
+      error('Your browser does not support IntersectionObserver. https://github.com/tolking/vue-lazy-loading#Browser-Support')
     }
   }
 
