@@ -4,10 +4,12 @@
 .editorconfig
 .eslintrc.js
 .prettierrc
+.browserslistrc
 
 node_modules/
 test/
 docs/
+dist/
 example/
 src/
 
@@ -18,3 +20,5 @@ package-lock.json
 *.test.js
 .travis.yml
 tsconfig.json
+babel.config.js
+rollup.config.js
